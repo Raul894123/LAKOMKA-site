@@ -1,4 +1,4 @@
-const ADMIN_WHATSAPP = "77001234567";
+const ADMIN_WHATSAPP = "+77074105717";
 const CART_STORAGE_KEY = "lakomka_cart";
 
 const products = [
