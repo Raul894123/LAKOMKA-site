@@ -55,13 +55,6 @@
                 <p>Ежедневно: 09:00 – 22:00</p>
               </article>
             </div>
-            <a
-              class="glovo-btn"
-              href="https://glovoapp.com/en/kz/oskemen-ust-kamenogorsk/stores/lakomka-ukk"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Заказать через Glovo</a
-            >
           </div>
         </section>
 
@@ -97,11 +90,39 @@
                   <input name="phone" type="tel" placeholder="+7 777 123 45 67" required />
                 </label>
                 <label>
+                  Тип заказа
+                  <select name="orderType" id="orderType" required>
+                    <option value="delivery">Доставка</option>
+                    <option value="takeaway">С собой</option>
+                    <option value="dinein">В заведении</option>
+                  </select>
+                </label>
+                <label>
+                  Способ оплаты
+                  <select name="paymentMethod" required>
+                    <option value="Карта">Карта</option>
+                    <option value="Наличные">Наличные</option>
+                    <option value="Kaspi QR">Kaspi QR</option>
+                    <option value="Kaspi в приложении">Kaspi в приложении</option>
+                  </select>
+                </label>
+                <label id="addressField">
                   Адрес доставки
-                  <textarea name="address" rows="3" placeholder="Улица, дом, квартира" required></textarea>
+                  <textarea name="address" id="addressInput" rows="3" placeholder="Улица, дом, квартира" required></textarea>
+                </label>
+                <label id="tokenField" class="hidden">
+                  Номерок в заведении
+                  <input name="token" id="tokenInput" type="text" placeholder="Например: A-7" />
                 </label>
                 <button type="submit" class="checkout-btn">Оформить заказ</button>
               </form>
+              <a
+                class="glovo-btn"
+                href="https://glovoapp.com/en/kz/oskemen-ust-kamenogorsk/stores/lakomka-ukk"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Заказать через Glovo</a
+              >
             </aside>
           </div>
         </section>

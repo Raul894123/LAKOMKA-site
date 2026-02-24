@@ -180,8 +180,10 @@ body {
 
 .glovo-btn {
   display: inline-block;
+  text-align: center;
   text-decoration: none;
   padding: 0.8rem 1.1rem;
+  margin-top: 0.8rem;
 }
 
 .glovo-btn:hover,
@@ -251,6 +253,17 @@ body {
   padding: 0.55rem;
 }
 
+.menu-qty-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  padding: 0.4rem;
+}
+
 .cart-layout {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
@@ -310,6 +323,8 @@ body {
 
 .checkout-panel {
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .checkout-panel h3 {
@@ -333,15 +348,18 @@ body {
 }
 
 .checkout-form input,
-.checkout-form textarea {
+.checkout-form textarea,
+.checkout-form select {
   border: 1px solid var(--border);
   border-radius: 0.65rem;
   padding: 0.55rem 0.7rem;
   font: inherit;
+  background: #fff;
 }
 
 .checkout-form input:focus,
-.checkout-form textarea:focus {
+.checkout-form textarea:focus,
+.checkout-form select:focus {
   border-color: var(--accent);
   outline: 3px solid var(--ring);
 }

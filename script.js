@@ -44,6 +44,12 @@ const products = [
   },
 ];
 
+const ORDER_TYPE_LABELS = {
+  delivery: "Доставка",
+  takeaway: "С собой",
+  dinein: "В заведении",
+};
+
 const state = {
   route: "home",
   cart: loadCart(),
@@ -58,6 +64,11 @@ const cartContent = document.getElementById("cartContent");
 const cartCount = document.getElementById("cartCount");
 const totalPrice = document.getElementById("totalPrice");
 const checkoutForm = document.getElementById("checkoutForm");
+const orderType = document.getElementById("orderType");
+const addressField = document.getElementById("addressField");
+const addressInput = document.getElementById("addressInput");
+const tokenField = document.getElementById("tokenField");
+const tokenInput = document.getElementById("tokenInput");
 
 document.getElementById("currentYear").textContent = new Date().getFullYear();
 
@@ -90,8 +101,18 @@ function setRoute(route) {
 
 function renderMenu() {
   menuGrid.innerHTML = products
-    .map(
-      (product) => `
+    .map((product) => {
+      const quantity = state.cart[product.id] || 0;
+      const controls =
+        quantity > 0
+          ? `<div class="menu-qty-controls">
+              <button class="small-btn" data-change="minus" data-id="${product.id}" aria-label="Уменьшить">−</button>
+              <span class="qty">${quantity}</span>
+              <button class="small-btn" data-change="plus" data-id="${product.id}" aria-label="Увеличить">+</button>
+            </div>`
+          : `<button class="add-btn" data-add-id="${product.id}">В корзину</button>`;
+
+      return `
       <article class="menu-item">
         <img src="${product.image}" alt="${product.name}" loading="lazy" />
         <div class="menu-body">
@@ -100,11 +121,11 @@ function renderMenu() {
             <span class="price">${formatPrice(product.price)}</span>
           </div>
           <p>${product.desc}</p>
-          <button class="add-btn" data-add-id="${product.id}">В корзину</button>
+          ${controls}
         </div>
       </article>
-    `
-    )
+    `;
+    })
     .join("");
 }
 
@@ -159,41 +180,75 @@ function renderCart() {
     .join("");
 }
 
-function addToCart(id) {
-  state.cart[id] = (state.cart[id] || 0) + 1;
-  persistCart();
+function refreshUI() {
+  renderMenu();
   renderCart();
 }
 
 function changeCartItem(id, action) {
-  if (!state.cart[id]) return;
+  if (action === "plus" || action === "add") {
+    state.cart[id] = (state.cart[id] || 0) + 1;
+  }
 
-  if (action === "plus") state.cart[id] += 1;
-  if (action === "minus") state.cart[id] -= 1;
-  if (action === "remove" || state.cart[id] <= 0) delete state.cart[id];
+  if (action === "minus" && state.cart[id]) {
+    state.cart[id] -= 1;
+  }
+
+  if (action === "remove" || state.cart[id] <= 0) {
+    delete state.cart[id];
+  }
 
   persistCart();
-  renderCart();
+  refreshUI();
+}
+
+function getGreetingByTime() {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return "Доброе утро";
+  if (hour >= 12 && hour < 18) return "Добрый день";
+  if (hour >= 18 && hour < 23) return "Добрый вечер";
+  return "Доброй ночи";
+}
+
+function updateOrderTypeFields() {
+  const type = orderType.value;
+
+  const needsAddress = type === "delivery";
+  addressField.classList.toggle("hidden", !needsAddress);
+  addressInput.required = needsAddress;
+
+  const needsToken = type === "dinein";
+  tokenField.classList.toggle("hidden", !needsToken);
+  tokenInput.required = needsToken;
 }
 
 function buildWhatsappMessage(formData, items, total) {
+  const orderTypeText = ORDER_TYPE_LABELS[formData.orderType] || "Не указан";
   const lines = [
-    "Здравствуйте! Новый заказ из сайта Лакомка:",
+    `${getGreetingByTime()}, заказ с сайта Лакомка!`,
     "",
-    ...items.map(
-      (item, index) =>
-        `${index + 1}. ${item.name} — ${item.quantity} шт. × ${formatPrice(item.price)} = ${formatPrice(
-          item.quantity * item.price
-        )}`
-    ),
+    "Позиции:",
+    ...items.map((item, index) => `${index + 1}. ${item.name} — ${item.quantity} шт.`),
     "",
-    `Итого: ${formatPrice(total)}`,
+    `Сумма: ${formatPrice(total)}`,
+    `Способ оплаты: ${formData.paymentMethod}`,
+    `Тип заказа: ${orderTypeText}`,
+  ];
+
+  if (formData.orderType === "delivery") {
+    lines.push(`Адрес доставки: ${formData.address || "Не указан"}`);
+  }
+
+  if (formData.orderType === "dinein") {
+    lines.push(`Номерок в заведении: ${formData.token || "Не указан"}`);
+  }
+
+  lines.push(
     "",
     "Данные клиента:",
     `Имя: ${formData.name}`,
-    `Телефон: ${formData.phone}`,
-    `Адрес: ${formData.address}`,
-  ];
+    `Телефон: ${formData.phone}`
+  );
 
   return lines.join("\n");
 }
@@ -204,6 +259,12 @@ function checkout(event) {
   const items = getCartItems();
   if (!items.length) {
     alert("Корзина пустая. Добавьте товары в меню.");
+    return;
+  }
+
+  updateOrderTypeFields();
+
+  if (!checkoutForm.reportValidity()) {
     return;
   }
 
@@ -225,8 +286,10 @@ navButtons.forEach((btn) => {
 menuGrid.addEventListener("click", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLElement)) return;
-  const id = target.dataset.addId;
-  if (id) addToCart(id);
+
+  const id = target.dataset.addId || target.dataset.id;
+  const action = target.dataset.addId ? "add" : target.dataset.change;
+  if (id && action) changeCartItem(id, action);
 });
 
 cartList.addEventListener("click", (event) => {
@@ -237,8 +300,9 @@ cartList.addEventListener("click", (event) => {
   if (id && action) changeCartItem(id, action);
 });
 
+orderType.addEventListener("change", updateOrderTypeFields);
 checkoutForm.addEventListener("submit", checkout);
 
-renderMenu();
-renderCart();
+updateOrderTypeFields();
+refreshUI();
 setRoute(state.route);
