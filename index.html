@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Лакомка — кафе</title>
+    <meta
+      name="description"
+      content="Лакомка — уютное кафе в Усть-Каменогорске. Меню, корзина и быстрый заказ через WhatsApp."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="header">
+        <div class="brand-wrap">
+          <div class="brand-dot" aria-hidden="true"></div>
+          <div>
+            <h1 class="brand-title">Лакомка</h1>
+            <p class="brand-subtitle">Кафе · Усть-Каменогорск</p>
+          </div>
+        </div>
+        <nav class="main-nav" aria-label="Основная навигация">
+          <button class="nav-link active" data-route="home">О нас</button>
+          <button class="nav-link" data-route="menu">Меню</button>
+          <button class="nav-link" data-route="cart">
+            Корзина <span id="cartCount" class="cart-badge">0</span>
+          </button>
+        </nav>
+      </header>
+
+      <main>
+        <section id="home" class="screen active" aria-labelledby="homeTitle">
+          <div class="hero">
+            <p class="pill">Добро пожаловать</p>
+            <h2 id="homeTitle">Уют, аромат кофе и любимые десерты в «Лакомке»</h2>
+            <p>
+              «Лакомка» — это место, где приятно начать утро с бодрящего кофе,
+              встретиться с друзьями за десертом или сделать быстрый, но вкусный
+              перерыв в течение дня.
+            </p>
+            <div class="info-grid">
+              <article class="info-card">
+                <h3>Адрес</h3>
+                <p>Усть-Каменогорск, ТК Император, Проспект Ауэзова 28, 0 этаж, 070004.</p>
+              </article>
+              <article class="info-card">
+                <h3>Время работы</h3>
+                <p>Ежедневно: 09:00 – 22:00</p>
+              </article>
+            </div>
+            <a
+              class="glovo-btn"
+              href="https://glovoapp.com/en/kz/oskemen-ust-kamenogorsk/stores/lakomka-uk"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Заказать через Glovo</a
+            >
+          </div>
+        </section>
+
+        <section id="menu" class="screen" aria-labelledby="menuTitle">
+          <div class="section-head">
+            <h2 id="menuTitle">Меню</h2>
+            <p>Добавляйте понравившиеся позиции в корзину.</p>
+          </div>
+          <div id="menuGrid" class="menu-grid" aria-live="polite"></div>
+        </section>
+
+        <section id="cart" class="screen" aria-labelledby="cartTitle">
+          <div class="section-head">
+            <h2 id="cartTitle">Корзина</h2>
+            <p>Проверьте заказ перед отправкой в WhatsApp.</p>
+          </div>
+
+          <div id="cartEmpty" class="empty-state">Корзина пока пуста. Добавьте что-нибудь из меню ☕</div>
+          <div id="cartContent" class="cart-layout hidden">
+            <div>
+              <ul id="cartList" class="cart-list"></ul>
+            </div>
+            <aside class="checkout-panel">
+              <h3>Оформление заказа</h3>
+              <p class="total-line">Итог: <strong id="totalPrice">0 ₸</strong></p>
+              <form id="checkoutForm" class="checkout-form">
+                <label>
+                  Имя
+                  <input name="name" type="text" placeholder="Например: Алия" required />
+                </label>
+                <label>
+                  Телефон
+                  <input name="phone" type="tel" placeholder="+7 777 123 45 67" required />
+                </label>
+                <label>
+                  Адрес доставки
+                  <textarea name="address" rows="3" placeholder="Улица, дом, квартира" required></textarea>
+                </label>
+                <button type="submit" class="checkout-btn">Оформить заказ</button>
+              </form>
+            </aside>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <p>© <span id="currentYear"></span> Лакомка · <a href="http://www.komputerny-oslik.site/">komputerny-oslik.site</a></p>
+      </footer>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
